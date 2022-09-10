@@ -10,7 +10,7 @@ python-dotenv = "*"
 numpy = "*"
 jinja2 = "*"
 requests = "*"
-sklearn = "1.0.2"
+scikit-learn = "==1.0.2"
 pandas = "*"
 joblib = "*"
 

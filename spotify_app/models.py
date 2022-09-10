@@ -1,3 +1,6 @@
+# No Database required to generate predictions
+# Try putting both Code-Alongs together as an extra challenge!
+
 from flask_sqlalchemy import SQLAlchemy
 
 DB = SQLAlchemy()

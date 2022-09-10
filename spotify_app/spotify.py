@@ -49,6 +49,8 @@ def get_song_by_title(title):
     # We'll just grab the first one and assume it's the best result
     if response['tracks']['items']:
         first_song = response['tracks']['items'][0]
+        # print(first_song)
+        # print(first_song['artists'][0]['id'])
         # Grabbing only the portions of the response that we want to save in the DB
         song = {'id': first_song['id'],
                 'title': first_song['name'],
@@ -56,14 +58,14 @@ def get_song_by_title(title):
                 'uri': first_song['uri'],
                 'popularity': first_song['popularity'],
                 'explicit': first_song['explicit'],
-                'year': first_song['album']['release_date']}
-
+                'year': first_song['album']['release_date'],
+                'artist_id': first_song['artists'][0]['id']}
         return song
     else:
         return False
 
 def get_audio_features(id):
-    	# https://api.spotify.com/v1/audio-features/{id}
+    # https://api.spotify.com/v1/audio-features/{id}
 
     # Get an authentication token
     token = authenticate()
@@ -84,6 +86,69 @@ def get_audio_features(id):
     response = response.json()
 
     return response
+
+def get_artist_genres(artist_id):
+    # https://api.spotify.com/v1/artists/{id}
+
+    # Get an authentication token
+    token = authenticate()
+
+    # Base URL for Query
+    BASE_URL = 'https://api.spotify.com/v1/'
+
+    # Add authentication token to the request headers
+    headers = {
+    'Authorization': 'Bearer {token}'.format(token=token)
+    }
+
+    # Build a string of the URL that we want to query
+    query_url = BASE_URL + 'artists/' + artist_id
+    # Query the Spotify API for the song
+    response = requests.get(query_url, headers=headers)
+    # Parse the response into a dictionary (JSON)
+    response = response.json()
+
+    if len(response['genres']) == 0:
+        return ['']
+    else:
+        return response['genres']
+
+def get_song_by_id(song_id):
+
+    # print(song_id)
+
+    # https://api.spotify.com/v1/tracks/{id}
+
+    # Get an authentication token
+    token = authenticate()
+
+    # Base URL for Query
+    BASE_URL = 'https://api.spotify.com/v1/'
+
+    # Add authentication token to the request headers
+    headers = {
+    'Authorization': 'Bearer {token}'.format(token=token)
+    }
+
+    # Build a string of the URL that we want to query
+    query_url = BASE_URL + 'tracks/' + song_id
+    # Query the Spotify API for the song
+    response = requests.get(query_url, headers=headers)
+    # Parse the response into a dictionary (JSON)
+    response = response.json()
+
+    track = {'title': response['name'],
+             'artist': response['artists'][0]['name'],
+             'uri': response['uri'],
+             'href': response['href'],
+             'song_id': response['id']}
+
+    # print(response['name'])
+    # print(response['artists'][0]['name'])
+    # print(response['uri'])
+    # print(response['href'])
+
+    return track
 
 if __name__ == '__main__':
     pass

@@ -24,29 +24,39 @@
         <p class="error">{{ message }}</p>
         <div class="recent">
             <hr>
-            <h2>Similar Songs</h2>
+            {% if search_song %}
+            <h3>You Searched For </h3>
+            <ul>
+                <li class="recent_search">
+                    <div class="left">
+                        <h5>{{search_song.title}}</h5>
+                    </div>
+                    <div class="right">
+                        <a href="{{ search_song.uri }}"><button class="btn btn-success ml-2">Open in App</button></a>
+                        <a href="http://open.spotify.com/track/{{ search_song.id }}" target="_blank"><button
+                                class="btn btn-success ml-2">Open Online</button></a>
+                    </div>
+                </li>
+            </ul>
+            <hr>
+            {% endif %}
+            {% if predictions %}
+            <h3>Similar Songs</h3>
             <ul>
                 {% for prediction in predictions %}
                 <li class="recent_search">
-                    <a href='http://open.spotify.com/track/{{ prediction }}'>{{prediction}}</a>
-                </li>
-                {% endfor %}
-            </ul>
-            <h2>Recent Searches</h2>
-            <ul>
-                {% for search in recent_searches %}
-                <li class="recent_search">
                     <div class="left">
-                        <h5>{{search.title}}</h5>
+                        <h5>{{prediction.title}}</h5>
                     </div>
                     <div class="right">
-                        <a href="{{ search.uri }}"><button class="btn btn-success ml-2">Open in App</button></a>
-                        <a href="http://open.spotify.com/track/{{ search.song_id }}" target="_blank"><button
+                        <a href="{{ prediction.uri }}"><button class="btn btn-success ml-2">Open in App</button></a>
+                        <a href="http://open.spotify.com/track/{{ prediction.song_id }}" target="_blank"><button
                                 class="btn btn-success ml-2">Open Online</button></a>
                     </div>
                 </li>
                 {% endfor %}
             </ul>
+            {% endif %}
         </div>
     </div>
 </body>

@@ -20,49 +20,19 @@ def create_app():
     @app.route('/', methods=['POST', 'GET'])
     def root():
         if request.method == "GET": 
-            # get 5 most recent searches
-            recent = RecentSearches.query.all()[-5:]
-            # reverse list and display on the page
-            return render_template('base.html', recent_searches=recent[::-1])
+            return render_template('base.html', message="Please enter a song title above")
         elif request.method == 'POST':
-
             song_title = request.values['song_title']
-            song = get_song_by_title(song_title)
-            if song:
-                try: 
-                    db_song = RecentSearches(song_id=song['id'],
-                                            title=song['title'],
-                                            href=song['href'],
-                                            uri=song['uri'])
-                    DB.session.add(db_song)
-                except Exception as e:
-                    print(f'Error processing {song_title}: {e}')
-                    raise e
-                else:
-                    DB.session.commit()
-                    # get 5 most recent searches
-                    recent = RecentSearches.query.all()[-5:]
-                    # reverse list and display on the page
-                    return render_template('base.html', recent_searches=recent[::-1], message='')
-            else:
-                # get 5 most recent searches
-                recent = RecentSearches.query.all()[-5:]
-                message = "Sorry, we couldn't find a song with that title."
-                return render_template('base.html', recent_searches=recent[::-1], message=message)
+
+            search_song, predictions = get_similar_songs(song_title)
+
+            return render_template('base.html', search_song=search_song, predictions=predictions, message='')
 
     @app.route('/reset')
     def reset():
         DB.drop_all()
         DB.create_all()
         return render_template('base.html')
-
-    @app.route('/predict')
-    def predict():
-
-        predictions = get_similar_songs('Hey Macarena!')
-        print(predictions)
-
-        return render_template('base.html', predictions=predictions)
 
     return app
 
